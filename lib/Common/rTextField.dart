@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wakili_ui/Services/common_service.dart';
 import 'package:wakili_ui/appUtils/app_colors.dart';
 
 class RTextField extends StatefulWidget {
   final String? hintText;
   final TextEditingController controller;
+  final Function (String txt) onSuffixTapped;
 
   const RTextField({super.key,
     this.hintText,
     required this.controller,
+    required this.onSuffixTapped,
   });
 
   @override
@@ -47,7 +50,7 @@ class _RTextFieldState extends State<RTextField> {
             fillColor: Colors.transparent,
             filled: true,
             suffix: Container(
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                   maxWidth: 70,
                   minWidth: 30,
                   minHeight: 30),
@@ -57,10 +60,14 @@ class _RTextFieldState extends State<RTextField> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10, vertical: 10),
                 textColor: Colors.white,
-                color: widget.controller.text.length<= 0?
+                color: widget.controller.text.isEmpty?
                 AppColors.primaryDarken.withOpacity(.2):
                 AppColors.primaryDarken,
-                onPressed: (){},
+                onPressed: widget.controller.text.isEmpty?
+                (){
+                  CommonService().
+                  toast("Looks like you haven't posted a link yet");
+                } :widget.onSuffixTapped(widget.controller.text),
                 shape: RoundedRectangleBorder(
                     borderRadius:
                     BorderRadius.circular(25)),

@@ -1,7 +1,17 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wakili_ui/Common/circle_button.dart';
+import 'package:wakili_ui/Common/custom_transition.dart';
 import 'package:wakili_ui/Common/rTextField.dart';
+import 'package:wakili_ui/Mobile/mobile_upload.dart';
+import 'package:wakili_ui/Services/process_docs_service.dart';
+import 'package:wakili_ui/Web/web_upload.dart';
 import 'package:wakili_ui/appUtils/text_styling.dart';
+
+import '../dialogs.dart';
 
 class UploadPage extends StatelessWidget {
 
@@ -30,7 +40,15 @@ class UploadPage extends StatelessWidget {
             const SizedBox(height: 70,),
             CircleButton(
                 buttonIcon: Icons.cloud_upload_rounded,
-                onTap: (){},
+                onTap: () async {
+                  FilePickerResult? result = await FilePicker.platform.pickFiles();
+                  if (result != null) {
+                    File file = File(result.files.single.path!);
+                  } else {
+                    Dialogs.showToastDialog("Oops! Something went wrong while "
+                        "processing your upload, \n Please Try again Later");
+                  }
+                },
                 text: ""),
             const SizedBox(height: 70,),
             Padding(
@@ -40,9 +58,20 @@ class UploadPage extends StatelessWidget {
             const SizedBox(height: 70,),
             RTextField(
               controller: pageLinkController,
-              hintText: "Past A link here",
+              hintText: "Copy and Paste A link here",
+              onSuffixTapped: (txt) async {
+                Future<Map<String, dynamic>> processedDoc =
+                DocsProcessing().extractWebPage(txt.replaceAll(" ", ""));
+                processedDoc.then((response){
+                  if(response['status']){
+                    Navigator.push(
+                        context,
+                        CustomPageRoute(
+                            kIsWeb? WebUpload():  MobileUploadPage()));
+                  }
+                });
+              },
             )
-
           ],
         ),
       ),
