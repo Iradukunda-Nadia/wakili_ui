@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wakili_ui/Common/custom_button.dart';
+import 'package:wakili_ui/Mobile/mobile_upload.dart';
+import 'package:wakili_ui/Web/web_upload.dart';
 import 'package:wakili_ui/appUtils/app_colors.dart';
 import 'package:wakili_ui/appUtils/text_styling.dart';
 
@@ -49,7 +52,13 @@ class HomePage extends StatelessWidget {
                           textAlign: TextAlign.center,),
                         ),
                         CustomButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                    kIsWeb? WebUpload():  MobileUploadPage()));
+                          },
                           buttonText: "Get Started Now ;)",
                           icon: const Icon(CupertinoIcons.forward, color:
                           Colors.white,),
